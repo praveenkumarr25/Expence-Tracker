@@ -51,13 +51,15 @@
             updateCategories();
             updateCharts();
             updateTransactionsTable();
+            setTodayDate();
         }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+            document.querySelector('.menubar').classList.remove('show');
             
             if(tabName === 'dashboard') {
                 setTimeout(() => updateCharts(), 100);
@@ -100,32 +102,30 @@
             const type = document.getElementById('transType').value;
             const category = document.getElementById('transCategory').value;
             const descInput = document.getElementById('transDescription');
-            if (descInput.value.trim() === '') {
-                let defaultDesc = '';
-                if (type === 'Income') {
-                    switch(category) {
-                        case 'Salary': defaultDesc = 'Monthly Salary'; break;
-                        case 'Freelance': defaultDesc = 'Freelance Work'; break;
-                        case 'Business': defaultDesc = 'Business Income'; break;
-                        case 'Investments': defaultDesc = 'Investment Returns'; break;
-                        case 'Other Income': defaultDesc = 'Other Income'; break;
-                    }
-                } else {
-                    switch(category) {
-                        case 'Rent': defaultDesc = 'Monthly Rent'; break;
-                        case 'Utilities': defaultDesc = 'Utility Bills'; break;
-                        case 'Groceries': defaultDesc = 'Grocery Shopping'; break;
-                        case 'Transportation': defaultDesc = 'Transportation'; break;
-                        case 'Food': defaultDesc = 'Food and Dining'; break;
-                        case 'Entertainment': defaultDesc = 'Entertainment'; break;
-                        case 'Shopping': defaultDesc = 'Shopping'; break;
-                        case 'Health': defaultDesc = 'Health and Medical'; break;
-                        case 'Education': defaultDesc = 'Education'; break;
-                        case 'Other Expenses': defaultDesc = 'Other Expenses'; break;
-                    }
+            let defaultDesc = '';
+            if (type === 'Income') {
+                switch(category) {
+                    case 'Salary': defaultDesc = 'Monthly Salary'; break;
+                    case 'Freelance': defaultDesc = 'Freelance Work'; break;
+                    case 'Business': defaultDesc = 'Business Income'; break;
+                    case 'Investments': defaultDesc = 'Investment Returns'; break;
+                    case 'Other Income': defaultDesc = 'Other Income'; break;
                 }
-                descInput.value = defaultDesc;
+            } else {
+                switch(category) {
+                    case 'Rent': defaultDesc = 'Monthly Rent'; break;
+                    case 'Utilities': defaultDesc = 'Utility Bills'; break;
+                    case 'Groceries': defaultDesc = 'Grocery Shopping'; break;
+                    case 'Transportation': defaultDesc = 'Transportation'; break;
+                    case 'Food': defaultDesc = 'Food and Dining'; break;
+                    case 'Entertainment': defaultDesc = 'Entertainment'; break;
+                    case 'Shopping': defaultDesc = 'Shopping'; break;
+                    case 'Health': defaultDesc = 'Health and Medical'; break;
+                    case 'Education': defaultDesc = 'Education'; break;
+                    // case 'Other Expenses': defaultDesc = 'Other Expenses'; break; // Leave empty
+                }
             }
+            descInput.value = defaultDesc;
         }
 
         function addTransaction() {
@@ -351,4 +351,8 @@
             loadUserData();
         } else {
             document.getElementById('container').style.display = 'none';
+        }
+
+        function toggleMenu() {
+            document.querySelector('.menubar').classList.toggle('show');
         }

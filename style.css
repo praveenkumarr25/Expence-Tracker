@@ -85,45 +85,74 @@ body {
    HEADER
 ====================== */
 header {
-    text-align: center;
+    display: flex;
+    align-items: center;
     margin-bottom: 30px;
+}
+
+#menuToggle {
+    display: none;
+    background: #3498DB;
+    border: 2px solid #FFF;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+#menuToggle:hover {
+    background: #1E40AF;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+#menuToggle span {
+    width: 22px;
+    height: 5px;
+    background: #000;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.title-section {
+    flex-grow: 1;
+    text-align: center;
 }
 
 header h1 {
     font-size: 2.3em;
     color: var(--primary);
-    margin-bottom: 5px;
+    margin: 0;
 }
 
-header .logout-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 8px 16px;
-    background: var(--expense);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-header .logout-btn:hover {
-    background: #7F1D1D;
+header p {
+    margin: 5px 0 0 0;
+    color: var(--subtext);
 }
 
 /* ======================
-   TABS
+   MENUBAR
 ====================== */
-.tabs {
+.menubar {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
     justify-content: center;
     flex-wrap: wrap;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.tab-btn {
+.menu-btn {
     background: white;
     border: 1px solid var(--border);
     padding: 10px 22px;
@@ -135,10 +164,25 @@ header .logout-btn:hover {
     color: var(--text);
 }
 
-.tab-btn.active {
+.menu-btn.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
+}
+
+.menu-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.logout-menu {
+    background: #6B7280;
+    color: white;
+    border-color: #6B7280;
+}
+
+.logout-menu:hover {
+    background: #4B5563;
 }
 
 /* ======================
@@ -354,6 +398,7 @@ header .logout-btn:hover {
     padding: 22px;
     width: 100%;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow-x: auto;
 }
 
 .transactions-list h2 {
@@ -501,5 +546,42 @@ table tbody tr.expense {
 
     .form-group {
         grid-template-columns: 1fr;
+    }
+
+    #menuToggle {
+        display: block;
+    }
+
+    .menubar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 250px;
+        background: var(--card-bg);
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        flex-direction: column;
+        padding: 20px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        margin-bottom: 0;
+        border-radius: 0;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .menubar.show {
+        transform: translateX(0);
+    }
+
+    .menu-btn {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        text-align: left;
+    }
+
+    .logout-menu {
+        margin-top: auto;
     }
 }

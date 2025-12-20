@@ -17,15 +17,22 @@
 
     <div class="container" id="container">
         <header>
-            <h1>💰 Smart Expense Tracker</h1>
-            <p>Track, Analyze & Manage Your Finances</p>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <button id="menuToggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="title-section">
+                <h1>💰 Smart Expense Tracker</h1>
+                <p>Track, Analyze & Manage Your Finances</p>
+            </div>
         </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('add-transaction')">➕ Add Transaction</button>
-            <button class="tab-btn" onclick="switchTab('dashboard')">📊 Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('all-transactions')">📋 All Transactions</button>
+        <div class="menubar">
+            <button class="menu-btn active" onclick="switchTab('add-transaction')">➕ Add Transaction</button>
+            <button class="menu-btn" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="menu-btn" onclick="switchTab('all-transactions')">📋 All Transactions</button>
+            <button class="menu-btn logout-menu" onclick="logout()">Logout</button>
         </div>
 
         <!-- ADD TRANSACTION TAB -->
@@ -40,8 +47,8 @@
                     <div>
                         <label>Type</label>
                         <select id="transType" onchange="updateCategories()">
-                            <option value="Income">Income</option>
                             <option value="Expense">Expense</option>
+                            <option value="Income">Income</option>
                         </select>
                     </div>
                     <div>
@@ -65,8 +72,8 @@
                     <div>
                         <label>Payment Method</label>
                         <select id="transPaymentMethod">
-                            <option value="Cash">Cash</option>
                             <option value="UPI/Bank">UPI/Bank</option>
+                            <option value="Cash">Cash</option>
                         </select>
                     </div>
                 </div>
