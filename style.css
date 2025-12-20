@@ -20,6 +20,52 @@
 }
 
 /* ======================
+   LOGIN
+====================== */
+.login-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+    z-index: 1000;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.login-container input {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login-container button {
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.login-container button:hover {
+    background: #162D77;
+}
+
+/* ======================
    BASE
 ====================== */
 body {
@@ -47,6 +93,23 @@ header h1 {
     font-size: 2.3em;
     color: var(--primary);
     margin-bottom: 5px;
+}
+
+header .logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: var(--expense);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+header .logout-btn:hover {
+    background: #7F1D1D;
 }
 
 /* ======================
@@ -388,6 +451,40 @@ table tbody tr.expense {
     text-align: center;
     color: var(--subtext);
     padding: 40px 20px;
+}
+
+/* ======================
+   DATA MANAGEMENT
+====================== */
+.data-section {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 22px;
+    margin-top: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.data-section h2 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.data-section button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.data-section button:hover {
+    background: #162D77;
+}
+
+.data-section input[type="file"] {
+    margin-right: 10px;
 }
 
 /* ======================

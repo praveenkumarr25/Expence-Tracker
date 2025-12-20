@@ -1,10 +1,57 @@
 
 
-        let transactions = JSON.parse(localStorage.getItem('transactions')) || [
+        let transactions = JSON.parse(localStorage.getItem(`transactions_${localStorage.getItem('currentUser')}`)) || [
         ];
 
         let currentPeriod = 'monthly';
         let expensePieChart, incomeExpenseChart;
+
+        function login() {
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.id === userId && u.password === password);
+            if (user) {
+                localStorage.setItem('currentUser', userId);
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('container').style.display = 'block';
+                loadUserData();
+            } else {
+                alert('Invalid ID or password');
+            }
+        }
+
+        function register() {
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+            if (!userId || !password) {
+                alert('Please enter ID and password');
+                return;
+            }
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.find(u => u.id === userId)) {
+                alert('User ID already exists');
+            } else {
+                users.push({id: userId, password: password});
+                localStorage.setItem('users', JSON.stringify(users));
+                alert('Registration successful! You can now login.');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            document.getElementById('container').style.display = 'none';
+            document.getElementById('login').style.display = 'block';
+            document.getElementById('userId').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function loadUserData() {
+            transactions = JSON.parse(localStorage.getItem(`transactions_${localStorage.getItem('currentUser')}`)) || [];
+            updateCategories();
+            updateCharts();
+            updateTransactionsTable();
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -46,6 +93,39 @@
                     categorySelect.appendChild(option);
                 });
             }
+            autoFillDescription();
+        }
+
+        function autoFillDescription() {
+            const type = document.getElementById('transType').value;
+            const category = document.getElementById('transCategory').value;
+            const descInput = document.getElementById('transDescription');
+            if (descInput.value.trim() === '') {
+                let defaultDesc = '';
+                if (type === 'Income') {
+                    switch(category) {
+                        case 'Salary': defaultDesc = 'Monthly Salary'; break;
+                        case 'Freelance': defaultDesc = 'Freelance Work'; break;
+                        case 'Business': defaultDesc = 'Business Income'; break;
+                        case 'Investments': defaultDesc = 'Investment Returns'; break;
+                        case 'Other Income': defaultDesc = 'Other Income'; break;
+                    }
+                } else {
+                    switch(category) {
+                        case 'Rent': defaultDesc = 'Monthly Rent'; break;
+                        case 'Utilities': defaultDesc = 'Utility Bills'; break;
+                        case 'Groceries': defaultDesc = 'Grocery Shopping'; break;
+                        case 'Transportation': defaultDesc = 'Transportation'; break;
+                        case 'Food': defaultDesc = 'Food and Dining'; break;
+                        case 'Entertainment': defaultDesc = 'Entertainment'; break;
+                        case 'Shopping': defaultDesc = 'Shopping'; break;
+                        case 'Health': defaultDesc = 'Health and Medical'; break;
+                        case 'Education': defaultDesc = 'Education'; break;
+                        case 'Other Expenses': defaultDesc = 'Other Expenses'; break;
+                    }
+                }
+                descInput.value = defaultDesc;
+            }
         }
 
         function addTransaction() {
@@ -54,14 +134,15 @@
             const category = document.getElementById('transCategory').value;
             const description = document.getElementById('transDescription').value;
             const amount = parseFloat(document.getElementById('transAmount').value);
+            const paymentMethod = document.getElementById('transPaymentMethod').value;
 
             if(!date || !description || !amount) {
                 alert('Please fill all fields!');
                 return;
             }
 
-            transactions.push({date, type, category, description, amount});
-            localStorage.setItem('transactions', JSON.stringify(transactions));
+            transactions.push({date, type, category, description, amount, paymentMethod});
+            localStorage.setItem(`transactions_${localStorage.getItem('currentUser')}`, JSON.stringify(transactions));
             
             clearForm();
             alert('✓ Transaction added successfully!');
@@ -72,13 +153,14 @@
             setTodayDate();
             document.getElementById('transDescription').value = '';
             document.getElementById('transAmount').value = '';
+            document.getElementById('transPaymentMethod').value = 'Cash';
             updateCategories();
         }
 
         function deleteTransaction(index) {
             if(confirm('Delete this transaction?')) {
                 transactions.splice(index, 1);
-                localStorage.setItem('transactions', JSON.stringify(transactions));
+                localStorage.setItem(`transactions_${localStorage.getItem('currentUser')}`, JSON.stringify(transactions));
                 updateTransactionsTable();
                 updateCharts();
             }
@@ -106,6 +188,7 @@
                     <td>${trans.category}</td>
                     <td>${trans.description}</td>
                     <td><span class="amount-text ${amountClass}">${sign}₹${trans.amount.toLocaleString('en-IN')}</span></td>
+                    <td>${trans.paymentMethod || 'Cash'}</td>
                     <td><button class="delete-btn" onclick="deleteTransaction(${transactions.indexOf(trans)})">Delete</button></td>
                 `;
                 tbody.appendChild(row);
@@ -228,7 +311,44 @@
             });
         }
 
+        function exportData() {
+            const data = JSON.stringify(transactions, null, 2);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `transactions_${localStorage.getItem('currentUser')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) {
+                alert('Please select a file to import');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    transactions = data;
+                    localStorage.setItem(`transactions_${localStorage.getItem('currentUser')}`, JSON.stringify(transactions));
+                    updateTransactionsTable();
+                    updateCharts();
+                    alert('Data imported successfully!');
+                } catch (err) {
+                    alert('Invalid file format. Please select a valid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
         // Initialize
-        setTodayDate();
-        updateCategories();
-        updateCharts();
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            document.getElementById('login').style.display = 'none';
+            loadUserData();
+        } else {
+            document.getElementById('container').style.display = 'none';
+        }
