@@ -1,58 +1,87 @@
+const API_BASE = 'http://localhost:5000/api';
 
+async function login() {
+  const email = document.getElementById('userId').value;
+  const password = document.getElementById('password').value;
 
-        let transactions = JSON.parse(localStorage.getItem(`transactions_${localStorage.getItem('currentUser')}`)) || [
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.token) {
+      localStorage.setItem('token', data.token);
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('container').style.display = 'block';
+      loadUserData();
+    } else {
+      document.getElementById('loginError').textContent = data.error || 'Login failed';
+    }
+  } catch (err) {
+    document.getElementById('loginError').textContent = 'Cannot reach server';
+  }
+}
+async function register() {
+  const email = document.getElementById('userId').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.token) {
+      localStorage.setItem('token', data.token);
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('container').style.display = 'block';
+      loadUserData();
+    } else {
+      document.getElementById('loginError').textContent = data.error || 'Register failed';
+    }
+  } catch (err) {
+    document.getElementById('loginError').textContent = 'Cannot reach server';
+  }
+}
+function logout() {
+  localStorage.removeItem('token');
+  document.getElementById('login').style.display = 'block';
+  document.getElementById('container').style.display = 'none';
+  document.getElementById('userId').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [
         ];
 
         let currentPeriod = 'monthly';
         let expensePieChart, incomeExpenseChart;
 
-        function login() {
-            const userId = document.getElementById('userId').value;
-            const password = document.getElementById('password').value;
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => u.id === userId && u.password === password);
-            if (user) {
-                localStorage.setItem('currentUser', userId);
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('container').style.display = 'block';
-                loadUserData();
-            } else {
-                alert('Invalid ID or password');
-            }
-        }
+async function loadUserData() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
-        function register() {
-            const userId = document.getElementById('userId').value;
-            const password = document.getElementById('password').value;
-            if (!userId || !password) {
-                alert('Please enter ID and password');
-                return;
-            }
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            if (users.find(u => u.id === userId)) {
-                alert('User ID already exists');
-            } else {
-                users.push({id: userId, password: password});
-                localStorage.setItem('users', JSON.stringify(users));
-                alert('Registration successful! You can now login.');
-            }
-        }
+  try {
+    const res = await fetch(`${API_BASE}/transactions`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    transactions = await res.json();
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            document.getElementById('container').style.display = 'none';
-            document.getElementById('login').style.display = 'block';
-            document.getElementById('userId').value = '';
-            document.getElementById('password').value = '';
-        }
+    updateCategories();
+    updateCharts();
+    updateTransactionsTable();
+    setTodayDate();
+  } catch (err) {
+    console.error('Load failed', err);
+  }
+}
 
-        function loadUserData() {
-            transactions = JSON.parse(localStorage.getItem(`transactions_${localStorage.getItem('currentUser')}`)) || [];
-            updateCategories();
-            updateCharts();
-            updateTransactionsTable();
-            setTodayDate();
-        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -128,26 +157,54 @@
             descInput.value = defaultDesc;
         }
 
-        function addTransaction() {
-            const date = document.getElementById('transDate').value;
-            const type = document.getElementById('transType').value;
-            const category = document.getElementById('transCategory').value;
-            const description = document.getElementById('transDescription').value;
-            const amount = parseFloat(document.getElementById('transAmount').value);
-            const paymentMethod = document.getElementById('transPaymentMethod').value;
+async function addTransaction() {
+  const date = document.getElementById('transDate').value;
+  const type = document.getElementById('transType').value;
+  const category = document.getElementById('transCategory').value;
+  const description = document.getElementById('transDescription').value;
+  const amount = parseFloat(document.getElementById('transAmount').value);
+  const paymentMethod = document.getElementById('transPaymentMethod').value;
 
-            if(!date || !description || !amount) {
-                alert('Please fill all fields!');
-                return;
-            }
+  if (!date || !description || !amount) {
+    alert('Please fill all fields!');
+    return;
+  }
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Please login first');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/transactions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ date, type, category, description, amount, paymentMethod })
+    });
+
+    if (res.ok) {
+      clearForm();
+      await loadUserData();  // refresh charts + table
+    } else {
+      alert('Save failed');
+    }
+  } catch (err) {
+    alert('Cannot reach server');
+  }
+}
+
 
             transactions.push({date, type, category, description, amount, paymentMethod});
-            localStorage.setItem(`transactions_${localStorage.getItem('currentUser')}`, JSON.stringify(transactions));
+            localStorage.setItem('transactions', JSON.stringify(transactions));
             
             clearForm();
             alert('✓ Transaction added successfully!');
             updateCharts();
-        }
+        
 
         function clearForm() {
             setTodayDate();
@@ -157,14 +214,32 @@
             updateCategories();
         }
 
-        function deleteTransaction(index) {
-            if(confirm('Delete this transaction?')) {
-                transactions.splice(index, 1);
-                localStorage.setItem(`transactions_${localStorage.getItem('currentUser')}`, JSON.stringify(transactions));
-                updateTransactionsTable();
-                updateCharts();
-            }
-        }
+        async function deleteTransaction(index) {
+  if (!confirm('Delete this transaction?')) return;
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Please login first');
+    return;
+  }
+
+  try {
+    const id = transactions[index]._id;  // comes from backend
+    const res = await fetch(`${API_BASE}/transactions/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+      await loadUserData();
+    } else {
+      alert('Delete failed');
+    }
+  } catch (err) {
+    alert('Cannot reach server');
+  }
+}
+
 
         function updateTransactionsTable() {
             const tbody = document.getElementById('tableBody');
@@ -317,7 +392,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `transactions_${localStorage.getItem('currentUser')}.json`;
+            a.download = 'transactions.json';
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -333,7 +408,7 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     transactions = data;
-                    localStorage.setItem(`transactions_${localStorage.getItem('currentUser')}`, JSON.stringify(transactions));
+                    localStorage.setItem('transactions', JSON.stringify(transactions));
                     updateTransactionsTable();
                     updateCharts();
                     alert('Data imported successfully!');
@@ -345,14 +420,16 @@
         }
 
         // Initialize
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            document.getElementById('login').style.display = 'none';
-            loadUserData();
-        } else {
-            document.getElementById('container').style.display = 'none';
-        }
+        loadUserData();
 
         function toggleMenu() {
             document.querySelector('.menubar').classList.toggle('show');
         }
+        document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('container').style.display = 'block';
+    loadUserData();
+  }
+});

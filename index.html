@@ -7,13 +7,22 @@
     <link rel="stylesheet" href="./style.css"> 
 </head>
 <body>
-    <div id="login" class="login-container">
-        <h2>Login to Expense Tracker</h2>
-        <input type="text" id="userId" placeholder="Enter User ID">
-        <input type="password" id="password" placeholder="Enter password">
-        <button onclick="login()">Login</button>
-        <button onclick="register()">Register</button>
+    <div id="login" class="login-container" style="display: block;">
+  <div class="login-box">
+    <h2>🔐 Smart Expense Tracker</h2>
+    <p>Track your finances across all devices</p>
+    <div class="form-group">
+      <input type="email" id="userId" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
     </div>
+    <button onclick="login()" class="btn btn-primary full-width">Login</button>
+    <button onclick="register()" class="btn btn-secondary full-width">Create Account</button>
+    <p id="loginError" style="color:#e74c3c;text-align:center;margin-top:10px;"></p>
+  </div>
+</div>
+
+<div class="container" id="container" style="display:none;">
+  <!-- your existing app -->
 
     <div class="container" id="container">
         <header>
@@ -33,6 +42,7 @@
             <button class="menu-btn" onclick="switchTab('dashboard')">📊 Dashboard</button>
             <button class="menu-btn" onclick="switchTab('all-transactions')">📋 All Transactions</button>
             <button class="menu-btn logout-menu" onclick="logout()">Logout</button>
+
         </div>
 
         <!-- ADD TRANSACTION TAB -->
