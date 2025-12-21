@@ -9,10 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB (free Atlas)
-mongoose.connect('mongodb+srv://praveenkumar2525k_db_user:Praveen2005k@cluster0.cvpwe40.mongodb.net/?appName=Cluster0')
+// // MongoDB (free Atlas)
+// mongoose.connect('mongodb+srv://praveenkumar2525k_db_user:Praveen2005k@cluster0.cvpwe40.mongodb.net/?appName=Cluster0')
+//   .then(() => console.log('✅ MongoDB connected'))
+//   .catch(err => console.log('❌ MongoDB error:', err));
+mongoose.connect(
+  process.env.MONGODB_URI
+)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.log('❌ MongoDB error:', err));
+
 
 // User Schema
 const userSchema = new mongoose.Schema({

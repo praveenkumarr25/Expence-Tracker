@@ -1,4 +1,6 @@
-const API_BASE = 'http://localhost:5000/api';
+// const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://expense-backend.onrender.com/api'; // use your actual Render URL
+
 
 async function login() {
   const email = document.getElementById('userId').value;
