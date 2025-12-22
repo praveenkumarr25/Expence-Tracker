@@ -376,3 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUserData();
   }
 });
+function toggleMenu() {
+  document.querySelector('.menubar').classList.toggle('show');
+}
