@@ -3,30 +3,19 @@ const API_BASE = 'https://expence-tracker-u3q5.onrender.com/api';  // Render bac
 
 // ===================== AUTH =======================
 async function login() {
-  const email = document.getElementById('userId').value;
-  const password = document.getElementById('password').value;
+  const email = ...;
+  const password = ...;
+  document.getElementById('loginButton').disabled = true;
+  document.getElementById('loginButton').textContent = 'Logging in...';
 
   try {
-    const res = await fetch(`${API_BASE}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.token) {
-      localStorage.setItem('token', data.token);
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('container').style.display = 'block';
-      document.getElementById('loginError').textContent = '';
-      await loadUserData();
-    } else {
-      document.getElementById('loginError').textContent =
-        data.error || 'Login failed';
-    }
+    const res = await fetch(`${API_BASE}/login`, { ... });
+    ...
   } catch (err) {
-    document.getElementById('loginError').textContent = 'Cannot reach server';
+    ...
+  } finally {
+    document.getElementById('loginButton').disabled = false;
+    document.getElementById('loginButton').textContent = 'Login';
   }
 }
 
