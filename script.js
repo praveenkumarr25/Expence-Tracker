@@ -3,16 +3,31 @@ const API_BASE = 'https://expence-tracker-u3q5.onrender.com/api';  // Render bac
 
 // ===================== AUTH =======================
 async function login() {
-  const email = ...;
-  const password = ...;
+  const email = document.getElementById('userId').value;
+  const password = document.getElementById('password').value;
   document.getElementById('loginButton').disabled = true;
   document.getElementById('loginButton').textContent = 'Logging in...';
 
   try {
-    const res = await fetch(`${API_BASE}/login`, { ... });
-    ...
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.token) {
+      localStorage.setItem('token', data.token);
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('container').style.display = 'block';
+      document.getElementById('loginError').textContent = '';
+      await loadUserData();
+    } else {
+      document.getElementById('loginError').textContent =
+        data.error || 'Login failed';
+    }
   } catch (err) {
-    ...
+    document.getElementById('loginError').textContent = 'Cannot reach server';
   } finally {
     document.getElementById('loginButton').disabled = false;
     document.getElementById('loginButton').textContent = 'Login';
@@ -300,13 +315,28 @@ function updateTransactionsTable() {
 // canvases with ids: 'expensePie', 'incomeExpenseChart'.
 
 function updateCharts() {
+  // Filter transactions based on currentPeriod
+  const now = new Date();
+  let filteredTransactions = transactions;
+
+  if (currentPeriod === 'weekly') {
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    filteredTransactions = transactions.filter(t => new Date(t.date) >= weekAgo);
+  } else if (currentPeriod === 'monthly') {
+    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    filteredTransactions = transactions.filter(t => new Date(t.date) >= monthAgo);
+  } else if (currentPeriod === 'yearly') {
+    const yearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+    filteredTransactions = transactions.filter(t => new Date(t.date) >= yearAgo);
+  } // 'all' uses all
+
   const totals = {
     income: 0,
     expense: 0,
     byCategory: {}
   };
 
-  transactions.forEach(t => {
+  filteredTransactions.forEach(t => {
     const amt = Number(t.amount) || 0;
     if (t.type === 'Income') {
       totals.income += amt;
@@ -317,7 +347,23 @@ function updateCharts() {
     }
   });
 
-  const ctxPie = document.getElementById('expensePie');
+  // Update dashboard summary cards
+  document.getElementById('totalIncome').textContent = `₹${totals.income.toFixed(2)}`;
+  document.getElementById('totalExpense').textContent = `₹${totals.expense.toFixed(2)}`;
+  const netBalance = totals.income - totals.expense;
+  document.getElementById('netBalance').textContent = `₹${netBalance.toFixed(2)}`;
+
+  // Count transactions
+  const incomeCount = filteredTransactions.filter(t => t.type === 'Income').length;
+  const expenseCount = filteredTransactions.filter(t => t.type === 'Expense').length;
+  document.getElementById('incomeCount').textContent = `${incomeCount} transactions`;
+  document.getElementById('expenseCount').textContent = `${expenseCount} transactions`;
+
+  // Savings rate
+  const savingsRate = totals.income > 0 ? ((netBalance / totals.income) * 100).toFixed(0) : 0;
+  document.getElementById('savingsRate').textContent = `${savingsRate}% Savings`;
+
+  const ctxPie = document.getElementById('expensePieChart');
   const ctxBar = document.getElementById('incomeExpenseChart');
   if (!ctxPie || !ctxBar) return;
 
@@ -362,6 +408,14 @@ function updateCharts() {
       }
     }
   });
+}
+
+// ===================== FILTER BY PERIOD =====================
+function filterByPeriod(period) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  updateCharts();
 }
 
 // ===================== INIT =======================
