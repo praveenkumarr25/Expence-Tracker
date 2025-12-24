@@ -7,6 +7,7 @@ async function login() {
   const password = document.getElementById('password').value;
   document.getElementById('loginButton').disabled = true;
   document.getElementById('loginButton').textContent = 'Logging in...';
+  console.time('login');
 
   try {
     const res = await fetch(`${API_BASE}/login`, {
@@ -15,6 +16,7 @@ async function login() {
       body: JSON.stringify({ email, password })
     });
     const data = await res.json();
+    console.timeEnd('login');
 
     if (res.ok && data.token) {
       localStorage.setItem('token', data.token);

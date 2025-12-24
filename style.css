@@ -5,8 +5,64 @@
 }
 
 /* ======================
-   COLOR SYSTEM (CLASSIC)
+   LOGIN
 ====================== */
+.login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.login-box {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.login-box p {
+    margin-bottom: 20px;
+    color: var(--subtext);
+}
+
+.login-box .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.login-box input {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+.login-box .btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.full-width {
+    width: 100%;
+}
 :root {
     --bg: #F9F9F9;
     --card-bg: #FFFFFF;
@@ -59,20 +115,14 @@ header {
     gap: 5px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    font-size: 1.5em;
+    color: white;
 }
 
 #menuToggle:hover {
     background: #1E40AF;
     transform: scale(1.1);
     box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-}
-
-#menuToggle span {
-    width: 22px;
-    height: 5px;
-    background: #000;
-    border-radius: 2px;
-    transition: all 0.3s ease;
 }
 
 .title-section {
@@ -434,6 +484,13 @@ table tbody tr.expense {
 }
 
 /* ======================
+   CLOSE BUTTON
+====================== */
+.close-btn {
+    display: none;
+}
+
+/* ======================
    EMPTY STATE
 ====================== */
 .empty-state {
@@ -500,8 +557,8 @@ table tbody tr.expense {
         position: fixed;
         left: 0;
         top: 0;
-        height: 100%;
-        width: 280px;
+        height: 100vh;
+        width: 100vw;
         background: var(--card-bg);
         box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         flex-direction: column;
@@ -516,6 +573,18 @@ table tbody tr.expense {
 
     .menubar.show {
         transform: translateX(0);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 2em;
+        color: var(--text);
+        cursor: pointer;
+        display: block;
     }
 
     .menu-btn {

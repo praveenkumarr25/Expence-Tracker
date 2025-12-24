@@ -22,151 +22,142 @@
 </div>
 
 <div class="container" id="container" style="display:none;">
-  <!-- your existing app -->
-
-    <div class="container" id="container">
-        <header>
-            <button id="menuToggle" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-                
-            </button>
-            <div class="title-section">
-                <h1>💰 Smart Expense Tracker</h1>
-                <p>Track, Analyze & Manage Your Finances</p>
-            </div>
-        </header>
-
-        <div class="menubar">
-            <button class="menu-btn active" onclick="switchTab('add-transaction')">➕ Add Transaction</button>
-            <button class="menu-btn" onclick="switchTab('dashboard')">📊 Dashboard</button>
-            <button class="menu-btn" onclick="switchTab('all-transactions')">📋 All Transactions</button>
-            <button class="menu-btn logout-menu" onclick="logout()">Logout</button>
-
+    <header>
+            <button id="menuToggle" onclick="toggleMenu()">☰</button>
+            <h1>💰 Smart Expense Tracker</h1>
+            <p>Track, Analyze & Manage Your Finances</p>
         </div>
+    </header>
 
-        <!-- ADD TRANSACTION TAB -->
-        <div id="add-transaction" class="tab-content active">
-            <div class="form-section">
-                <h2>Add New Transaction</h2>
-                <div class="form-group">
-                    <div>
-                        <label>Date</label>
-                        <input type="date" id="transDate" value="">
-                    </div>
-                    <div>
-                        <label>Type</label>
-                        <select id="transType" onchange="updateCategories()">
-                            <option value="Expense">Expense</option>
-                            <option value="Income">Income</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Category</label>
-                        <select id="transCategory" onchange="autoFillDescription()">
-                            <option value="Salary">Salary</option>
-                            <option value="Freelance">Freelance</option>
-                            <option value="Business">Business</option>
-                        </select>
-                    </div>
+    <div class="menubar">
+        <button class="close-btn" onclick="toggleMenu()">✕</button>
+        <button class="menu-btn active" onclick="switchTab('add-transaction')">➕ Add Transaction</button>
+        <button class="menu-btn" onclick="switchTab('dashboard')">📊 Dashboard</button>
+        <button class="menu-btn" onclick="switchTab('all-transactions')">📋 All Transactions</button>
+        <button class="menu-btn logout-menu" onclick="logout()">Logout</button>
+
+    </div>
+
+    <!-- ADD TRANSACTION TAB -->
+    <div id="add-transaction" class="tab-content active">
+        <div class="form-section">
+            <h2>Add New Transaction</h2>
+            <div class="form-group">
+                <div>
+                    <label>Date</label>
+                    <input type="date" id="transDate" value="">
                 </div>
-                <div class="form-group">
-                    <div>
-                        <label>Description</label>
-                        <input type="text" id="transDescription" placeholder="Enter description">
-                    </div>
-                    <div>
-                        <label>Amount (₹)</label>
-                        <input type="number" id="transAmount" placeholder="0" min="0" step="0.01">
-                    </div>
-                    <div>
-                        <label>Payment Method</label>
-                        <select id="transPaymentMethod">
-                            <option value="UPI/Bank">UPI/Bank</option>
-                            <option value="Cash">Cash</option>
-                        </select>
-                    </div>
+                <div>
+                    <label>Type</label>
+                    <select id="transType" onchange="updateCategories()">
+                        <option value="Expense">Expense</option>
+                        <option value="Income">Income</option>
+                    </select>
                 </div>
-                <div class="form-buttons">
-                    <button class="btn btn-primary" onclick="addTransaction()">✓ Add Transaction</button>
-                    <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
+                <div>
+                    <label>Category</label>
+                    <select id="transCategory" onchange="autoFillDescription()">
+                        <option value="Salary">Salary</option>
+                        <option value="Freelance">Freelance</option>
+                        <option value="Business">Business</option>
+                    </select>
                 </div>
             </div>
-        </div>
-
-        <!-- DASHBOARD TAB -->
-        <div id="dashboard" class="tab-content">
-            <div class="period-selector">
-                <button class="period-btn active" onclick="filterByPeriod('monthly')">📅 Monthly</button>
-                <button class="period-btn" onclick="filterByPeriod('yearly')">📈 Yearly</button>
-                <button class="period-btn" onclick="filterByPeriod('weekly')">📆 Weekly</button>
-                <button class="period-btn" onclick="filterByPeriod('all')">All Time</button>
-            </div>
-
-            <div class="dashboard">
-                <div class="card income">
-                    <h3>Total Income</h3>
-                    <div class="amount" id="totalIncome">₹0</div>
-                    <div class="subtitle" id="incomeCount">0 transactions</div>
+            <div class="form-group">
+                <div>
+                    <label>Description</label>
+                    <input type="text" id="transDescription" placeholder="Enter description">
                 </div>
-                <div class="card expense">
-                    <h3>Total Expenses</h3>
-                    <div class="amount" id="totalExpense">₹0</div>
-                    <div class="subtitle" id="expenseCount">0 transactions</div>
+                <div>
+                    <label>Amount (₹)</label>
+                    <input type="number" id="transAmount" placeholder="0" min="0" step="0.01">
                 </div>
-                <div class="card balance">
-                    <h3>Net Balance</h3>
-                    <div class="amount" id="netBalance">₹0</div>
-                    <div class="subtitle" id="savingsRate">0% Savings</div>
+                <div>
+                    <label>Payment Method</label>
+                    <select id="transPaymentMethod">
+                        <option value="UPI/Bank">UPI/Bank</option>
+                        <option value="Cash">Cash</option>
+                    </select>
                 </div>
             </div>
-
-            <div class="charts-container">
-                <div class="chart-card">
-                    <h2>📊 Expense Distribution</h2>
-                    <canvas id="expensePieChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <h2>📈 Income vs Expenses</h2>
-                    <canvas id="incomeExpenseChart"></canvas>
-                </div>
-            </div>
-
-            <div class="data-section">
-                <h2>Data Management</h2>
-                <button onclick="exportData()">Export Data</button>
-                <input type="file" id="importFile" accept=".json">
-                <button onclick="importData()">Import Data</button>
-            </div>
-        </div>
-
-        <!-- ALL TRANSACTIONS TAB -->
-        <div id="all-transactions" class="tab-content">
-            <div class="transactions-list">
-                <h2>All Transactions</h2>
-                <table id="transactionsTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                            <th>Payment Method</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                    </tbody>
-                </table>
-                <div id="emptyState" class="empty-state">
-                    <p>No transactions yet. Add one from the "Add Transaction" tab!</p>
-                </div>
+            <div class="form-buttons">
+                <button class="btn btn-primary" onclick="addTransaction()">✓ Add Transaction</button>
+                <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
             </div>
         </div>
     </div>
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard" class="tab-content">
+        <div class="period-selector">
+            <button class="period-btn active" onclick="filterByPeriod('monthly')">📅 Monthly</button>
+            <button class="period-btn" onclick="filterByPeriod('yearly')">📈 Yearly</button>
+            <button class="period-btn" onclick="filterByPeriod('weekly')">📆 Weekly</button>
+            <button class="period-btn" onclick="filterByPeriod('all')">All Time</button>
+        </div>
+
+        <div class="dashboard">
+            <div class="card income">
+                <h3>Total Income</h3>
+                <div class="amount" id="totalIncome">₹0</div>
+                <div class="subtitle" id="incomeCount">0 transactions</div>
+            </div>
+            <div class="card expense">
+                <h3>Total Expenses</h3>
+                <div class="amount" id="totalExpense">₹0</div>
+                <div class="subtitle" id="expenseCount">0 transactions</div>
+            </div>
+            <div class="card balance">
+                <h3>Net Balance</h3>
+                <div class="amount" id="netBalance">₹0</div>
+                <div class="subtitle" id="savingsRate">0% Savings</div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <h2>📊 Expense Distribution</h2>
+                <canvas id="expensePieChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2>📈 Income vs Expenses</h2>
+                <canvas id="incomeExpenseChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h2>Data Management</h2>
+            <button onclick="exportData()">Export Data</button>
+            <input type="file" id="importFile" accept=".json">
+            <button onclick="importData()">Import Data</button>
+        </div>
+    </div>
+
+    <!-- ALL TRANSACTIONS TAB -->
+    <div id="all-transactions" class="tab-content">
+        <div class="transactions-list">
+            <h2>All Transactions</h2>
+            <table id="transactionsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state">
+                <p>No transactions yet. Add one from the "Add Transaction" tab!</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="./script.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
